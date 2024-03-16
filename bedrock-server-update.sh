@@ -1,9 +1,8 @@
 #!/bin/bash
 
 MCSERVER_HOME=/home/mcserver/
-MCSERVER_DOWNLOAD_ZIP=$MCSERVER_HOME/minecraft_bedrock/bedrock-server.zip
 MCSERVER_INSTALL_PATH=$MCSERVER_HOME/minecraft_bedrock/
-MCSERVER_PROP_BKUP_FILE=$MCSERVER_HOME/server.properties.bkup
+MCSERVER_BKUP_PATH=$MCSERVER_HOME/backup/
 
 echo "==== MINECRAFT BEDROCK SERVER AUTO UPDATE ===="
 
@@ -23,16 +22,23 @@ fi
 set -e
 
 echo "Start downloading ..."
-sudo wget $DOWNLOAD_URL -O $MCSERVER_DOWNLOAD_ZIP
+MCSERVER_DOWNLOAD_ZIP=$MCSERVER_HOME/minecraft_bedrock/bedrock-server-${LATEST_VERSION}.zip
+if ! [ -e $MCSERVER_DOWNLOAD_ZIP ]; then
+    sudo wget $DOWNLOAD_URL -O $MCSERVER_DOWNLOAD_ZIP
+else
+    echo "Package already downloaded: $MCSERVER_DOWNLOAD_ZIP"
+fi
 
 echo "Stopping server ..."
 sudo systemctl stop mcbedrock
 
 echo "Start installing ..."
-sudo cp $MCSERVER_INSTALL_PATH/server.properties $MCSERVER_PROP_BKUP_FILE
+sudo cp $MCSERVER_INSTALL_PATH/server.properties $MCSERVER_BKUP_PATH/server.properties
+sudo cp $MCSERVER_INSTALL_PATH/permissions.json $MCSERVER_BKUP_PATH/permissions.json
 sudo unzip -o $MCSERVER_DOWNLOAD_ZIP -d $MCSERVER_INSTALL_PATH
 sudo rm $MCSERVER_DOWNLOAD_ZIP
-sudo mv $MCSERVER_PROP_BKUP_FILE $MCSERVER_INSTALL_PATH/server.properties
+sudo mv $MCSERVER_BKUP_PATH/server.properties $MCSERVER_INSTALL_PATH/server.properties
+sudo mv $MCSERVER_BKUP_PATH/permissions.json $MCSERVER_INSTALL_PATH/permissions.json
 sudo chown -R mcserver:mcserver $MCSERVER_HOME
 
 echo "Restarting server ..."
