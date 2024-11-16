@@ -17,13 +17,14 @@ echo CURRENT_VERSION=$CURRENT_VERSION
 
 if [ $LATEST_VERSION = $CURRENT_VERSION ]; then
     echo "Current version is the latest. DONE!"
+    exit 0
 fi
 
 set -e
 
 echo "Start downloading ..."
 MCSERVER_DOWNLOAD_ZIP=$MCSERVER_HOME/minecraft_bedrock/bedrock-server-${LATEST_VERSION}.zip
-sudo wget -c $DOWNLOAD_URL -O $MCSERVER_DOWNLOAD_ZIP
+sudo wget -c --user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" -O $MCSERVER_DOWNLOAD_ZIP $DOWNLOAD_URL
 
 echo "Stopping server ..."
 sudo systemctl stop mcbedrock
