@@ -6,7 +6,7 @@ MCSERVER_BKUP_PATH=$MCSERVER_HOME/backup
 
 echo "==== MINECRAFT BEDROCK SERVER AUTO UPDATE ===="
 
-DOWNLOAD_URL=$(curl -H "Accept-Encoding: identity" -H "Accept-Language: en" -s -L -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; BEDROCK-UPDATER)" https://minecraft.net/en-us/download/server/bedrock/ |  grep -o 'https.*/bin-linux/.*.zip')
+DOWNLOAD_URL="$(curl -s https://net-secondary.web.minecraft-services.net/api/v1.0/download/links | jq -r '.result.links[] | select(.downloadType=="serverBedrockLinux") | .downloadUrl')"
 LATEST_VERSION=${DOWNLOAD_URL#*bedrock-server-}
 LATEST_VERSION=${LATEST_VERSION%.zip}
 if [ -e current_version.txt ]; then
